@@ -58,7 +58,7 @@ use syn::{
     Fields, Ident, LitStr, Token,
 };
 
-#[proc_macro_derive(Sql, attributes(sql, expr))]
+#[proc_macro_derive(Sql, attributes(sql))]
 pub fn sql(input: TokenStream) -> TokenStream {
     let derive_input = parse_macro_input!(input as DeriveInput);
 
