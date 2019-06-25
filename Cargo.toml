@@ -1,0 +1,20 @@
+[package]
+name = "mssql_client_derive"
+version = "0.1.0"
+authors = ["Dany Laporte <dany_laporte@hotmail.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+Inflector = "0.11"
+itertools = "0.8"
+quote = "0.6"
+syn = { version = "0.15"}
+
+[dev-dependencies]
+failure = "0.1"
+futures = "0.1"
+mssql_client = { git = "https://github.com/danylaporte/mssql_client.git" }
+tokio = "0.1"
