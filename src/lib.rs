@@ -77,14 +77,13 @@ pub fn sql(input: TokenStream) -> TokenStream {
         .iter()
         .filter_map(|f| match f {
             SqlField::Expr { .. } => None,
-            SqlField::SqlNamed { ident, .. } | SqlField::SqlUnnamed(ident) => {
-                f.sql().map(|sql| (ident, sql))
-            }
+            SqlField::SqlNamed { ident, .. } | SqlField::SqlUnnamed(ident) => Some(ident),
         })
         .enumerate()
-        .map(|(index, (ident, sql))| {
-            let error = format!("Reading `{}` (sql: `{}`) failed; {{}}", ident, sql);
-            quote!(#ident: row.get(#index).map_err(|e| format_err!(#error, e))?)
+        .map(|(index, ident)| {
+            let error = LitStr::new("Read `{}` failed; {}", ident.span());
+            let field = LitStr::new(&ident.to_string(), ident.span());
+            quote!(#ident: row.get(#index).map_err(|e| failure::format_err!(#error, #field, e))?)
         });
 
     let expr_gets = s.fields.iter().filter_map(|f| match f {
@@ -101,8 +100,6 @@ pub fn sql(input: TokenStream) -> TokenStream {
 
         impl mssql_client::FromRow for #name {
             fn from_row(row: &mssql_client::Row) -> Result<Self, failure::Error> {
-                use failure::{format_err, ResultExt};
-
                 Ok(Self {
                     #(#row_gets,)*
                     #(#expr_gets,)*
