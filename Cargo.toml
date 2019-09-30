@@ -1,6 +1,6 @@
 [package]
 name = "mssql_client_derive"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Dany Laporte <dany_laporte@hotmail.com>"]
 edition = "2018"
 
@@ -10,8 +10,8 @@ proc-macro = true
 [dependencies]
 Inflector = "0.11"
 itertools = "0.8"
-quote = "0.6"
-syn = { version = "0.15"}
+quote = "1.0"
+syn = { version = "1.0"}
 
 [dev-dependencies]
 failure = "0.1"

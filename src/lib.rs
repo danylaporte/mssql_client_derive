@@ -55,7 +55,7 @@ use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{
     parenthesized, parse, parse_macro_input, Attribute, Data, DeriveInput, Error, Expr, Field,
-    Fields, Ident, LitStr, Token,
+    Fields, Ident, LitInt, LitStr, Token,
 };
 
 #[proc_macro_derive(Sql, attributes(sql))]
@@ -83,6 +83,7 @@ pub fn sql(input: TokenStream) -> TokenStream {
         .map(|(index, ident)| {
             let error = LitStr::new("Read `{}` failed; {}", ident.span());
             let field = LitStr::new(&ident.to_string(), ident.span());
+            let index = LitInt::new(&index.to_string(), ident.span());
             quote!(#ident: row.get(#index).map_err(|e| failure::format_err!(#error, #field, e))?)
         });
 
@@ -201,7 +202,7 @@ impl SqlAttr {
             .map(|s| s.ident.to_string())
             .join("::");
         match name.as_str() {
-            "sql" | "sql_derive::sql" => Some(Self::parse_tts(a.tts.clone().into())),
+            "sql" | "sql_derive::sql" => Some(Self::parse_tts(a.tokens.clone().into())),
             _ => None,
         }
     }
